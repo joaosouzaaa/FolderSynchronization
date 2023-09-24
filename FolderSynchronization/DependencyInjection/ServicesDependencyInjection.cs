@@ -6,6 +6,7 @@ public static class ServicesDependencyInjection
 {
     public static void AddServicesDependencyInjection(this IServiceCollection services)
     {
+        services.AddTransient<IExecutableService, ExecutableService>();
         services.AddTransient<IFolderSynchronizationService, FolderSynchronizationService>();
         services.AddTransient<IInputService, InputService>();
         services.AddTransient<ILoggerService, LoggerService>();

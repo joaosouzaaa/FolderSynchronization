@@ -23,8 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="WorkerTests\" />
     <Folder Include="ServiceTests\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FolderSynchronization\FolderSynchronization.csproj" />
   </ItemGroup>
 
 </Project>
