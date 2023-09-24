@@ -5,7 +5,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddDependencyInjectionHandler();
-        services.AddHostedService<Worker>();
+        services.AddHostedService<FolderSynchronizationWorker>();
     })
     .Build();
 

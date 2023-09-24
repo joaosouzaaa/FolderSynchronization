@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="WorkerTests\" />
     <Folder Include="ServiceTests\" />
   </ItemGroup>
 
