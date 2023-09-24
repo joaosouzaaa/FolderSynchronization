@@ -48,7 +48,7 @@ public sealed class ExecutableService : IExecutableService
         await _folderSynchronizationService.SynchronizeFoldersAsync(synchronizeFolders);
 
         result.IsSuccess = true;
-        result.TimeInterval = timeInterval;
+        result.TimeIntervalSeconds = timeInterval;
         return result;
     }
 }

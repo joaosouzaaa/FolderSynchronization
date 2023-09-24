@@ -19,7 +19,8 @@ public sealed class FolderSynchronizationWorker : BackgroundService
             if (!synchronizeFoldersResult.IsSuccess)
                 continue;
 
-            await Task.Delay((int)synchronizeFoldersResult.TimeInterval * 1000, stoppingToken);
+            const int milisecondsMultiplier = 1000;
+            await Task.Delay((int)synchronizeFoldersResult.TimeIntervalSeconds * milisecondsMultiplier, stoppingToken);
         }
     }
 }
