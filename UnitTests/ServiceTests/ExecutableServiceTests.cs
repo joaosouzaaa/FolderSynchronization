@@ -1,6 +1,7 @@
 ﻿using FolderSynchronization.Arguments;
 using FolderSynchronization.Interfaces.Services;
 using FolderSynchronization.Services;
+using Moq;
 
 namespace UnitTests.ServiceTests;
 public sealed class ExecutableServiceTests
@@ -40,7 +41,7 @@ public sealed class ExecutableServiceTests
 
         // A
         _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
-            It.IsAny<SynchronizeFoldersArgument>()), 
+            It.IsAny<SynchronizeFoldersArgument>()),
             Times.Once());
 
         Assert.True(result.IsSuccess);
