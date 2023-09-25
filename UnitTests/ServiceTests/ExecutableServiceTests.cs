@@ -20,20 +20,18 @@ public sealed class ExecutableServiceTests
     public async Task ExecuteAsync_SuccessfullScenario()
     {
         // A
-        _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
-            .Returns(true);
-
-        var sourceFolderPath = "random source path";
-        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out sourceFolderPath))
-            .Returns(true);
-
-        var destinationFolderPath = "random destination path";
-        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out destinationFolderPath))
-            .Returns(true);
-
         var timeInterval = 123;
         _inputServiceMock.Setup(i => i.GetTimeInterval(out timeInterval))
             .Returns(true);
+
+        var sourceFolderPath = "sourcefolder";
+        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out sourceFolderPath))
+            .Returns(true);
+
+        var destinationFolderPath = "dest";
+        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out destinationFolderPath))
+            .Returns(true);
+
         _inputServiceMock.Setup(i => i.GetFileLogPath(out It.Ref<string>.IsAny))
             .Returns(true);
 
@@ -47,5 +45,132 @@ public sealed class ExecutableServiceTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal(result.TimeIntervalSeconds, timeInterval);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_GetTimeIntervalIsInvalid_ReturnFalse()
+    {
+        // A
+        _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
+            .Returns(false);
+
+        // A
+        var result = await _executableService.ExecuteAsync();
+
+        // A
+        _inputServiceMock.Verify(i => i.GetSourceFolderPath(out It.Ref<string>.IsAny), Times.Never());
+        _inputServiceMock.Verify(i => i.GetDestinationFolderPath(out It.Ref<string>.IsAny), Times.Never());
+        _inputServiceMock.Verify(i => i.GetFileLogPath(out It.Ref<string>.IsAny), Times.Never());
+        _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
+            It.IsAny<SynchronizeFoldersArgument>()),
+            Times.Never());
+
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.TimeIntervalSeconds);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_GetSourceFolderPathIsInvalid_ReturnsFalse()
+    {
+        // A
+        _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
+            .Returns(true);
+
+        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out It.Ref<string>.IsAny))
+            .Returns(false);
+
+        // A
+        var result = await _executableService.ExecuteAsync();
+
+        // A
+        _inputServiceMock.Verify(i => i.GetDestinationFolderPath(out It.Ref<string>.IsAny), Times.Never());
+        _inputServiceMock.Verify(i => i.GetFileLogPath(out It.Ref<string>.IsAny), Times.Never());
+        _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
+            It.IsAny<SynchronizeFoldersArgument>()),
+            Times.Never());
+
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.TimeIntervalSeconds);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_GetDestinationFolderPathIsInvalid_ReturnsFalse()
+    {
+        // A
+        _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
+            .Returns(true);
+
+        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out It.Ref<string>.IsAny))
+            .Returns(true);
+
+        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out It.Ref<string>.IsAny))
+            .Returns(false);
+
+        // A
+        var result = await _executableService.ExecuteAsync();
+
+        // A
+        _inputServiceMock.Verify(i => i.GetFileLogPath(out It.Ref<string>.IsAny), Times.Never());
+        _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
+            It.IsAny<SynchronizeFoldersArgument>()),
+            Times.Never());
+
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.TimeIntervalSeconds);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SourceFolder_Is_EqualTo_DestinationFolder_ReturnsFalse()
+    {
+        // A
+        _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
+            .Returns(true);
+
+        var sameFolderPath = "random";
+        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out sameFolderPath))
+            .Returns(true);
+
+        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out sameFolderPath))
+            .Returns(true);
+
+        // A
+        var result = await _executableService.ExecuteAsync();
+
+        // A
+        _inputServiceMock.Verify(i => i.GetFileLogPath(out It.Ref<string>.IsAny), Times.Never());
+        _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
+            It.IsAny<SynchronizeFoldersArgument>()),
+            Times.Never());
+
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.TimeIntervalSeconds);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_GetFileLogPathIsInvalid_ReturnsFalse()
+    {
+        // A
+        _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
+            .Returns(true);
+
+        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out It.Ref<string>.IsAny))
+            .Returns(true);
+
+        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out It.Ref<string>.IsAny))
+            .Returns(true);
+
+        _inputServiceMock.Setup(i => i.GetFileLogPath(out It.Ref<string>.IsAny))
+            .Returns(false);
+
+        // A
+        var result = await _executableService.ExecuteAsync();
+
+        // A
+        _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
+            It.IsAny<SynchronizeFoldersArgument>()),
+            Times.Never());
+
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.TimeIntervalSeconds);
     }
 }
