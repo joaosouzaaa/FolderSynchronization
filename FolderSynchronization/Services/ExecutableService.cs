@@ -23,10 +23,12 @@ public sealed class ExecutableService : IExecutableService
         if (!_inputService.GetTimeInterval(out var timeInterval))
             return result;
 
-        if (!_inputService.GetSourceFolderPath(out var sourceFolderPath))
+        const string sourceFolderPathInputMessage = "Please provide the source folder path which the info gonna be synchronized.";
+        if (!_inputService.GetFolderPath(sourceFolderPathInputMessage, out var sourceFolderPath))
             return result;
 
-        if (!_inputService.GetDestinationFolderPath(out var destinationFolderPath))
+        const string destinationFolderPathInputMessage = "Please provide the destination folder path which the info gonna be synchronized.";
+        if (!_inputService.GetFolderPath(destinationFolderPathInputMessage, out var destinationFolderPath))
             return result;
 
         if (sourceFolderPath == destinationFolderPath)

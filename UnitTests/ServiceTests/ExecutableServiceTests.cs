@@ -26,11 +26,11 @@ public sealed class ExecutableServiceTests
             .Returns(true);
 
         var sourceFolderPath = "sourcefolder";
-        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out sourceFolderPath))
+        _inputServiceMock.Setup(i => i.GetFolderPath(It.Is<string>(i => i == "Please provide the source folder path which the info gonna be synchronized."), out sourceFolderPath))
             .Returns(true);
 
         var destinationFolderPath = "dest";
-        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out destinationFolderPath))
+        _inputServiceMock.Setup(i => i.GetFolderPath(It.Is<string>(i => i == "Please provide the destination folder path which the info gonna be synchronized."), out destinationFolderPath))
             .Returns(true);
 
         _inputServiceMock.Setup(i => i.GetFileLogPath(out It.Ref<string>.IsAny))
@@ -59,8 +59,7 @@ public sealed class ExecutableServiceTests
         var result = await _executableService.ExecuteAsync();
 
         // A
-        _inputServiceMock.Verify(i => i.GetSourceFolderPath(out It.Ref<string>.IsAny), Times.Never());
-        _inputServiceMock.Verify(i => i.GetDestinationFolderPath(out It.Ref<string>.IsAny), Times.Never());
+        _inputServiceMock.Verify(i => i.GetFolderPath(It.IsAny<string>(), out It.Ref<string>.IsAny), Times.Never());
         _inputServiceMock.Verify(i => i.GetFileLogPath(out It.Ref<string>.IsAny), Times.Never());
         _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
             It.IsAny<SynchronizeFoldersArgument>()),
@@ -77,14 +76,14 @@ public sealed class ExecutableServiceTests
         _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
             .Returns(true);
 
-        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out It.Ref<string>.IsAny))
+        _inputServiceMock.Setup(i => i.GetFolderPath(It.IsAny<string>(), out It.Ref<string>.IsAny))
             .Returns(false);
 
         // A
         var result = await _executableService.ExecuteAsync();
 
         // A
-        _inputServiceMock.Verify(i => i.GetDestinationFolderPath(out It.Ref<string>.IsAny), Times.Never());
+        _inputServiceMock.Verify(i => i.GetFolderPath(It.IsAny<string>(), out It.Ref<string>.IsAny), Times.Once());
         _inputServiceMock.Verify(i => i.GetFileLogPath(out It.Ref<string>.IsAny), Times.Never());
         _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
             It.IsAny<SynchronizeFoldersArgument>()),
@@ -101,16 +100,15 @@ public sealed class ExecutableServiceTests
         _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
             .Returns(true);
 
-        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out It.Ref<string>.IsAny))
-            .Returns(true);
-
-        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out It.Ref<string>.IsAny))
+        _inputServiceMock.SetupSequence(i => i.GetFolderPath(It.IsAny<string>(), out It.Ref<string>.IsAny))
+            .Returns(true)
             .Returns(false);
 
         // A
         var result = await _executableService.ExecuteAsync();
 
         // A
+        _inputServiceMock.Verify(i => i.GetFolderPath(It.IsAny<string>(), out It.Ref<string>.IsAny), Times.Exactly(2));
         _inputServiceMock.Verify(i => i.GetFileLogPath(out It.Ref<string>.IsAny), Times.Never());
         _folderSynchronizationServiceMock.Verify(f => f.SynchronizeFoldersAsync(
             It.IsAny<SynchronizeFoldersArgument>()),
@@ -128,10 +126,10 @@ public sealed class ExecutableServiceTests
             .Returns(true);
 
         var sameFolderPath = "random";
-        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out sameFolderPath))
+        _inputServiceMock.Setup(i => i.GetFolderPath(It.IsAny<string>(), out sameFolderPath))
             .Returns(true);
 
-        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out sameFolderPath))
+        _inputServiceMock.Setup(i => i.GetFolderPath(It.IsAny<string>(), out sameFolderPath))
             .Returns(true);
 
         // A
@@ -154,10 +152,10 @@ public sealed class ExecutableServiceTests
         _inputServiceMock.Setup(i => i.GetTimeInterval(out It.Ref<int>.IsAny))
             .Returns(true);
 
-        _inputServiceMock.Setup(i => i.GetSourceFolderPath(out It.Ref<string>.IsAny))
+        _inputServiceMock.Setup(i => i.GetFolderPath(It.IsAny<string>(), out It.Ref<string>.IsAny))
             .Returns(true);
 
-        _inputServiceMock.Setup(i => i.GetDestinationFolderPath(out It.Ref<string>.IsAny))
+        _inputServiceMock.Setup(i => i.GetFolderPath(It.IsAny<string>(), out It.Ref<string>.IsAny))
             .Returns(true);
 
         _inputServiceMock.Setup(i => i.GetFileLogPath(out It.Ref<string>.IsAny))

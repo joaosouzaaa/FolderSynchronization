@@ -27,34 +27,26 @@ public sealed class InputService : IInputService
         }
     }
 
-    public bool GetSourceFolderPath(out string sourceFolderPath)
+    public bool GetFolderPath(string inputMessage, out string folderPath)
     {
-        const string inputMessage = "Please provide the source folder path which the info gonna be synchronized.";
         Console.WriteLine(inputMessage);
-        sourceFolderPath = Console.ReadLine();
+        folderPath = Console.ReadLine();
 
-        if (string.IsNullOrEmpty(sourceFolderPath))
+        if (string.IsNullOrEmpty(folderPath))
         {
             Console.WriteLine(inputMessage);
             return false;
         }
 
-        return IsFolderPathValid(ref sourceFolderPath);
-    }
-
-    public bool GetDestinationFolderPath(out string destinationFolderPath)
-    {
-        const string inputMessage = "Please provide the destination folder path which the info gonna be synchronized.";
-        Console.WriteLine(inputMessage);
-        destinationFolderPath = Console.ReadLine();
-
-        if (string.IsNullOrEmpty(destinationFolderPath))
+        if (!_fileSystem.Directory.Exists(folderPath))
         {
-            Console.WriteLine(inputMessage);
+            Console.WriteLine("The path for the folder provided does not exist.");
             return false;
         }
 
-        return IsFolderPathValid(ref destinationFolderPath);
+        folderPath = folderPath.FormatFolderPath();
+
+        return true;
     }
 
     public bool GetFileLogPath(out string fileLogPath)
@@ -83,19 +75,6 @@ public sealed class InputService : IInputService
             Console.WriteLine("The file extension has to be a text file (.txt).");
             return false;
         }
-
-        return true;
-    }
-
-    private bool IsFolderPathValid(ref string folderPath)
-    {
-        if (!_fileSystem.Directory.Exists(folderPath))
-        {
-            Console.WriteLine("The path for the folder provided does not exist.");
-            return false;
-        }
-
-        folderPath = folderPath.FormatFolderPath();
 
         return true;
     }
